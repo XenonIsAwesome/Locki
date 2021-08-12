@@ -1,3 +1,3 @@
-# discord.js_template
+# Locki
 
 ```npm install discord.js@12.5.3```
