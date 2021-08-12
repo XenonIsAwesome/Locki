@@ -55,6 +55,9 @@ client.on('ready', async () => {
         else { console.info(`[component] skipped over ${cmd.structure.data.name}`); }
     }
 
+    client.lockiChats = {};
+    client.lockiMembers = {};
+
     console.info(`Ready and logged in as ${client.user.tag}!`);
 });
 
