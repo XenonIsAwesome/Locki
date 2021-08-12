@@ -2,10 +2,10 @@ require('dotenv').config()
 
 const { getApp, parseArgs, interactionReply } = require('./util.js');
 
-const guildId = '';
+const guildId = '775372142396571678';
 
 const { Client, Collection } = require('discord.js');
-const client = new Client();
+const client = new Discord.Client({ ws: { intents: 'GUILD_MEMBERS' }});
 
 const fs = require('fs');
 

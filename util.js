@@ -1,3 +1,23 @@
+function validateChat(chat) {
+    chatRe = /⎯⎯ \[(🔓|🔒)\] [A-Z0-9]{6} ⎯⎯/;
+    return chatRe.test(chat.name);
+}
+
+function validateRole(role) {
+    roleRe = /\[(🔑|👑)\] [A-Z0-9]{6}/;
+    return roleRe.test(role.name);
+}
+
+function genRandCode() {
+    const alphabeth = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let st = '';
+    for (let i = 0; i < 6; i++) {
+        st += alphabeth[Math.floor(Math.random() * alphabeth.length)]
+    }
+
+    return st;
+}
+
 function parseArgs(args) {
     if (!args) { return { no: "args" }; }
 
@@ -30,6 +50,9 @@ function getApp(client, guildId) {
 }
 
 module.exports = {
+    validateChat,
+    validateRole,
+    genRandCode,
     parseArgs,
     interactionReply,
     getApp
