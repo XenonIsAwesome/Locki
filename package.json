@@ -1,0 +1,28 @@
+{
+  "name": "discord.js_template",
+  "version": "1.0.0",
+  "description": "Template for a discord.js bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XenonIsAwesome/discord.js_template.git"
+  },
+  "keywords": [
+    "discord.js",
+    "discordbot",
+    "discord",
+    "template"
+  ],
+  "author": "XenonIsAwesome",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/XenonIsAwesome/discord.js_template/issues"
+  },
+  "homepage": "https://github.com/XenonIsAwesome/discord.js_template#readme",
+  "dependencies": {
+    "discord.js": "^12.5.3"
+  }
+}
