@@ -49,11 +49,32 @@ function getApp(client, guildId) {
     return app;
 }
 
+async function promote(client, interaction, newMemberId) { 
+    const g = await client.guilds.fetch(interaction.guild_id);
+    const newOwner = await g.users.fetch(newMemberId);
+    const oldOwner = await g.users.fetch(interaction.member.user.id);
+    
+    const normalRoleId = client.lockiRooms[c_id].normalRole;
+    const ownerRoleId = client.lockiRooms[c_id].ownerRole;
+
+    newOwner.roles.remove(normalRoleId);
+    newOwner.roles.add(ownerRoleId);
+
+    oldOwner.roles.remove(ownerRoleId);
+    oldOwner.roles.add(normalRoleId);
+
+    return interactionReply(client, interaction, {
+        content: `Promoted ${newOwner.user.tag} to be owner.`,
+        flags: 1<<6
+    });
+}
+
 module.exports = {
     validateChat,
     validateRole,
     genRandCode,
     parseArgs,
     interactionReply,
-    getApp
+    getApp,
+    promote
 }
