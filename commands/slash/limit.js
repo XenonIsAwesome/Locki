@@ -1,4 +1,4 @@
-const { interactionReply } = require("../../util");
+const { interactionReply } = require("../../util.js");
 
 module.exports = {
     structure: {
@@ -18,6 +18,13 @@ module.exports = {
     async execute(client, interaction, args) {
         const c_id = `${interaction.guild_id}/${client.lockiMembers[interaction.member.user.id]}`
 
+        if (!client.lockiRooms[c_id]) {
+            return interactionReply(client, interaction, {
+                content: 'You are not in a room.',
+                flags: 1<<6
+            });
+        }
+        
         if (client.lockiRooms[c_id].owner !== interaction.member.user.id) {
             return interactionReply(client, interaction, {
                 content: 'Only the owner of the room can do that.',
@@ -25,20 +32,20 @@ module.exports = {
             });
         }
 
-        c = client.fetch(interaction.guild_id).then(g => {
-            return await g.channels.fetch(client.lockiMembers[interaction.member.user.id]);
+        const c = await client.guilds.fetch(interaction.guild_id,).then(async (g) => {
+            return await g.channels.cache.get(client.lockiMembers[interaction.member.user.id]);
         });
 
-        const amount = 0;
+        let amount = 0;
         if (args.amount) {
-            amount = args.amount.value;
+            amount = Math.min(Math.max(args.amount.value, 0), 99);
         }
-
-        c.setUserLimit(amount);
-
-        return interactionReply(client, interaction, {
-            content: `Limited the amount of users to ${amount}.`,
-            flags: 1<<6
-        });
+        
+        c.setUserLimit(amount).then(_ => {
+            return interactionReply(client, interaction, {
+                content: `Limited the amount of users to ${amount}.`,
+                flags: 1<<6
+            });
+        }).catch(console.error);
     }
 }

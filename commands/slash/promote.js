@@ -1,10 +1,10 @@
-const { promote } = require("../../util");
+const { promote, interactionReply } = require("../../util");
 
 module.exports = {
     structure: {
         data: {
             name: 'promote',
-            description: 'promote a member in the room',
+            description: 'Promote a member in the room',
             options: [
                 {
                   type: 9,
@@ -25,6 +25,17 @@ module.exports = {
             });
         }
 
-        return promote(client, interaction, args.member.value)
+        if (!client.lockiRooms[c_id].members.includes(args.member.value)) {
+            return interactionReply(client, interaction, {
+                content: `<@!${args.member.value}> isn't in the room.`,
+                flags: 1<<6
+            });
+        }
+
+        promote(client, interaction, args.member.value, c_id);
+        return interactionReply(client, interaction, {
+            content: `Promoted <@!${args.member.value}> to be owner.`,
+            flags: 1<<6
+        });
     }
 }

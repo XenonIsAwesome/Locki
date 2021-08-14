@@ -1,8 +1,10 @@
+const { interactionReply } = require('../../util.js');
+
 module.exports = {
     structure: {
         data: {
             name: 'remove',
-            description: 'remove a member from the room',
+            description: 'Remove a member from the room',
             options: [
                 {
                   type: 9,
@@ -23,15 +25,22 @@ module.exports = {
             });
         }
 
+        if (!client.lockiRooms[c_id].members.includes(args.member.value)) {
+            return interactionReply(client, interaction, {
+                content: `<@!${args.member.value}> isn't in the room.`,
+                flags: 1<<6
+            });
+        }
+
         const g = await client.guilds.fetch(interaction.guild_id);
-        const u = await g.users.fetch(args.member.value);
+        const u = await g.members.fetch(args.member.value);
         
         const normalRoleId = client.lockiRooms[c_id].normalRole;
 
         u.roles.remove(normalRoleId);
 
         return interactionReply(client, interaction, {
-            content: `Removed ${u.user.tag} from the room.`,
+            content: `Removed <@!${u.id}> from the room.`,
             flags: 1<<6
         });
     }

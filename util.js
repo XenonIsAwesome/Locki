@@ -42,17 +42,18 @@ function interactionReply(client, interaction, replyData) {
 function getApp(client, guildId) {
     const app = client.api.applications(client.user.id);
 
-    if (guildId != '') {
+    if (guildId) {
         app.guilds(guildId);
     }
 
     return app;
 }
 
-async function promote(client, interaction, newMemberId) { 
+async function promote(client, interaction, newMemberId, c_id) {
+    console.log(c_id);
     const g = await client.guilds.fetch(interaction.guild_id);
-    const newOwner = await g.users.fetch(newMemberId);
-    const oldOwner = await g.users.fetch(interaction.member.user.id);
+    const newOwner = await g.members.fetch(newMemberId);
+    const oldOwner = await g.members.fetch(interaction.member.user.id);
     
     const normalRoleId = client.lockiRooms[c_id].normalRole;
     const ownerRoleId = client.lockiRooms[c_id].ownerRole;
@@ -63,10 +64,7 @@ async function promote(client, interaction, newMemberId) {
     oldOwner.roles.remove(ownerRoleId);
     oldOwner.roles.add(normalRoleId);
 
-    return interactionReply(client, interaction, {
-        content: `Promoted ${newOwner.user.tag} to be owner.`,
-        flags: 1<<6
-    });
+    client.lockiRooms[c_id].owner = newOwner.id;
 }
 
 module.exports = {

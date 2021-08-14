@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/XenonIsAwesome/discord.js_template#readme",
   "dependencies": {
-    "discord.js": "^12.5.3"
+    "discord.js": "^12.5.3",
+    "dotenv": "^10.0.0",
+    "simple-json-db": "^1.2.3"
   }
 }

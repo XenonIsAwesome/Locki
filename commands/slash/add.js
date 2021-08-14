@@ -1,4 +1,6 @@
-  module.exports = {
+const { interactionReply } = require('../../util.js');
+  
+module.exports = {
     structure: {
         data: {
             name: 'add',
@@ -23,8 +25,15 @@
             });
         }
 
+        if (client.lockiRooms[c_id].members.includes(args.member.value)) {
+            return interactionReply(client, interaction, {
+                content: `<@!${args.member.value}> is already in the room.`,
+                flags: 1<<6
+            });
+        }
+
         const g = await client.guilds.fetch(interaction.guild_id);
-        const u = await g.users.fetch(args.member.value);
+        const u = await g.members.fetch(args.member.value);
 
         client.lockiRooms[c_id].members.push(args.member.value);
         
@@ -32,7 +41,7 @@
         u.roles.add(roleId);
 
         return interactionReply(client, interaction, {
-            content: `Added ${u.user.tag} to the room.`,
+            content: `Added <@!${u.id}> to the room.`,
             flags: 1<<6
         });
     }
