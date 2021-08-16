@@ -50,7 +50,6 @@ function getApp(client, guildId) {
 }
 
 async function promote(client, interaction, newMemberId, c_id) {
-    console.log(c_id);
     const g = await client.guilds.fetch(interaction.guild_id);
     const newOwner = await g.members.fetch(newMemberId);
     const oldOwner = await g.members.fetch(interaction.member.user.id);

@@ -31,64 +31,66 @@ module.exports = {
                 promote(client, {
                     member: { user: {id: oldState.member.id } },
                     guild_id: oldState.guild.id
-                }, rndMem);
+                }, rndMem, c_id);
             }
         }
-
-        if(newState.channelID === client.db.get(newState.guild.id).channel) {
-            // User joins a voice channel
-            let code = ''
-            do {
-                code = genRandCode();
-            } while (Object.values(client.lockiRooms).find(r => r.code == code));
-            
-            const ownerRole = await newState.guild.roles.create({
-                data: {
-                    name: `[👑] ${code}`,
-                    color: 'GOLD'
-                }
-            }).catch(console.error);
-
-            const normalRole = await newState.guild.roles.create({
-                data: {
-                    name: `[🔑] ${code}`
-                }
-            });
-    
-            const channel = await newState.guild.channels.create(`[🔒] ${code}`, {
-                type: 'voice',
-                permissionOverwrites: [
-                    {
-                        id: ownerRole.id,
-                        allow: [Permissions.FLAGS.VIEW_CHANNEL]
-                    },
-                    {
-                        id: normalRole.id,
-                        allow: [Permissions.FLAGS.VIEW_CHANNEL]
-                    },
-                    {
-                        id: newState.guild.id,
-                        deny: [Permissions.FLAGS.VIEW_CHANNEL]
+        client.db.guilds.findOne({ guildId: newState.guild.id }, async (err, dbGuild) => {
+            if(newState.channelID === dbGuild.channel) {
+                // User joins a voice channel
+                let code = ''
+                do {
+                    code = genRandCode();
+                } while (Object.values(client.lockiRooms).find(r => r.code == code));
+                
+                const ownerRole = await newState.guild.roles.create({
+                    data: {
+                        name: `[👑] ${code}`,
+                        color: 'GOLD'
                     }
-                ],
-                parent: client.db.get(newState.guild.id).parent
-            });
+                }).catch(console.error);
     
-            client.lockiRooms[`${newState.guild.id}/${channel.id}`] = {
-                code: code,
-
-                ownerRole: ownerRole.id,
-                normalRole: normalRole.id,
-                channel: channel.id,
+                const normalRole = await newState.guild.roles.create({
+                    data: {
+                        name: `[🔑] ${code}`
+                    }
+                });
+        
+                const channel = await newState.guild.channels.create(`[🔒] ${code}`, {
+                    type: 'voice',
+                    permissionOverwrites: [
+                        {
+                            id: ownerRole.id,
+                            allow: [Permissions.FLAGS.VIEW_CHANNEL]
+                        },
+                        {
+                            id: normalRole.id,
+                            allow: [Permissions.FLAGS.VIEW_CHANNEL]
+                        },
+                        {
+                            id: newState.guild.id,
+                            deny: [Permissions.FLAGS.VIEW_CHANNEL]
+                        }
+                    ],
+                    parent: dbGuild.parent
+                });
+        
+                client.lockiRooms[`${newState.guild.id}/${channel.id}`] = {
+                    code: code,
     
-                owner: newState.member.id,
-                members: [newState.member.id]
-            };
-
-            newState.setChannel(channel);
-            newState.member.roles.add(ownerRole);
-
-            client.lockiMembers[newState.member.id] = channel.id;
-        }
+                    ownerRole: ownerRole.id,
+                    normalRole: normalRole.id,
+                    channel: channel.id,
+        
+                    owner: newState.member.id,
+                    members: [newState.member.id]
+                };
+    
+                newState.setChannel(channel);
+                newState.member.roles.add(ownerRole);
+    
+                client.lockiMembers[newState.member.id] = channel.id;
+            }
+        })
+        
     }
 }

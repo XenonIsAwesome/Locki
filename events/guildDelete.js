@@ -2,6 +2,6 @@ module.exports = {
     name: 'guildDelete',
     once: false,
     async execute(client, guild) {
-        client.db.delete(guild.id);
+        client.db.guilds.remove({ guildId: guild.id });
     }
 }
